@@ -12,7 +12,6 @@
 #include <algorithm>
 #include <sstream>
 
-// ANSI color escape sequences
 namespace Color {
     const char* const RESET       = "\033[0m";
     const char* const BOLD        = "\033[1m";
@@ -24,7 +23,6 @@ namespace Color {
     const char* const MAGENTA     = "\033[35m";
     const char* const CYAN        = "\033[36m";
     const char* const WHITE       = "\033[37m";
-    const char* const BG_DARK     = "\033[48;5;236m";
     const char* const BRIGHT_CYAN = "\033[96m";
     const char* const BRIGHT_YEL  = "\033[93m";
 }
@@ -53,15 +51,35 @@ public:
             return false;
         }
 
-        // Generate puzzle with 6 to 8 words
+        // Difficulty Selection
+        std::cout << "\n" << Color::CYAN << Color::BOLD 
+                  << "=====================================================================\n"
+                  << "                     CLI CROSSWORD PUZZLE GAME                       \n"
+                  << "=====================================================================" 
+                  << Color::RESET << "\n";
+        std::cout << Color::BOLD << "Select Difficulty Level:\n" << Color::RESET;
+        std::cout << "  " << Color::BRIGHT_CYAN << "1" << Color::RESET << ". Easy   (4 - 5 words)\n";
+        std::cout << "  " << Color::BRIGHT_CYAN << "2" << Color::RESET << ". Medium (6 - 8 words) [Default]\n";
+        std::cout << "  " << Color::BRIGHT_CYAN << "3" << Color::RESET << ". Hard   (9 - 12 words)\n";
+        std::cout << Color::BOLD << "Enter choice (1-3): > " << Color::RESET;
+
+        std::string diffChoice;
+        int targetWords = 7;
+        if (std::getline(std::cin, diffChoice)) {
+            if (diffChoice == "1") targetWords = 4;
+            else if (diffChoice == "3") targetWords = 10;
+            else targetWords = 7;
+        }
+
+        std::cout << Color::DIM << "Generating crossword puzzle layout with DSA generator...\n" << Color::RESET;
+
         bool success = false;
         std::random_device rd;
-        for (int attempt = 0; attempt < 25; ++attempt) {
+        for (int attempt = 0; attempt < 30; ++attempt) {
             unsigned int seed = rd() + attempt * 101;
-            if (CrosswordGenerator::generate(dictionary.getAllWords(), 7, grid, placements, seed)) {
-                // Check graph connectivity
+            if (CrosswordGenerator::generate(dictionary.getAllWords(), targetWords, grid, placements, seed)) {
                 graph = CrosswordGraph::buildFromPlacements(placements);
-                if (graph.isConnected() && placements.size() >= 4) {
+                if (graph.isConnected() && placements.size() >= 3) {
                     success = true;
                     break;
                 }
@@ -175,7 +193,6 @@ public:
             return;
         }
 
-        // Clean user word
         std::string cleaned = inputWord;
         std::transform(cleaned.begin(), cleaned.end(), cleaned.begin(), ::toupper);
 
@@ -206,20 +223,58 @@ public:
         }
     }
 
-    void provideHint() {
+    // Hint function: Supports both random hint ("hint") and targeted clue hint ("hint 1A")
+    void provideHint(const std::string& targetClue = "") {
         struct UnsolvedCell {
             int r, c;
         };
         std::vector<UnsolvedCell> candidates;
 
-        for (const auto& pw : placements) {
-            if (pw.isSolved) continue;
-            int len = static_cast<int>(pw.word.length());
-            for (int i = 0; i < len; ++i) {
-                int r = (pw.dir == ACROSS) ? pw.row : pw.row + i;
-                int c = (pw.dir == ACROSS) ? pw.col + i : pw.col;
-                if (!grid.isRevealed(r, c)) {
-                    candidates.push_back({r, c});
+        if (!targetClue.empty()) {
+            char dirChar = std::toupper(targetClue.back());
+            Direction targetDir = (dirChar == 'A') ? ACROSS : DOWN;
+            std::string numPart = targetClue.substr(0, targetClue.size() - 1);
+            int clueNum = 0;
+            try {
+                clueNum = std::stoi(numPart);
+            } catch (...) {
+                std::cout << Color::RED << ">> Invalid clue format for hint! Use e.g. 'hint 1A'." << Color::RESET << "\n";
+                return;
+            }
+
+            for (const auto& pw : placements) {
+                if (pw.clueNumber == clueNum && pw.dir == targetDir) {
+                    if (pw.isSolved) {
+                        std::cout << Color::YELLOW << ">> Clue " << targetClue << " is already solved!" << Color::RESET << "\n";
+                        return;
+                    }
+                    int len = static_cast<int>(pw.word.length());
+                    for (int i = 0; i < len; ++i) {
+                        int r = (pw.dir == ACROSS) ? pw.row : pw.row + i;
+                        int c = (pw.dir == ACROSS) ? pw.col + i : pw.col;
+                        if (!grid.isRevealed(r, c)) {
+                            candidates.push_back({r, c});
+                        }
+                    }
+                    break;
+                }
+            }
+
+            if (candidates.empty()) {
+                std::cout << Color::YELLOW << ">> No remaining unrevealed letters in clue " << targetClue << "!" << Color::RESET << "\n";
+                return;
+            }
+        } else {
+            // General random hint across all words
+            for (const auto& pw : placements) {
+                if (pw.isSolved) continue;
+                int len = static_cast<int>(pw.word.length());
+                for (int i = 0; i < len; ++i) {
+                    int r = (pw.dir == ACROSS) ? pw.row : pw.row + i;
+                    int c = (pw.dir == ACROSS) ? pw.col + i : pw.col;
+                    if (!grid.isRevealed(r, c)) {
+                        candidates.push_back({r, c});
+                    }
                 }
             }
         }
@@ -236,27 +291,26 @@ public:
 
         grid.setRevealed(chosen.r, chosen.c, true);
         hintsUsed++;
-        score = std::max(0, score - 15);
+        int penalty = targetClue.empty() ? 15 : 20;
+        score = std::max(0, score - penalty);
 
         std::cout << Color::YELLOW << Color::BOLD 
-                  << ">> [HINT] Letter '" << grid.getChar(chosen.r, chosen.c)
+                  << ">> [HINT" << (targetClue.empty() ? "" : " for " + targetClue) 
+                  << "] Letter '" << grid.getChar(chosen.r, chosen.c)
                   << "' revealed at row " << chosen.r << ", col " << chosen.c 
-                  << "! (-15 pts)" << Color::RESET << "\n";
+                  << "! (-" << penalty << " pts)" << Color::RESET << "\n";
 
         checkAndUpdateFullyRevealedWords();
     }
 
     void run() {
-        std::cout << "\n" << Color::CYAN << Color::BOLD 
-                  << "=====================================================================\n"
-                  << "                     CLI CROSSWORD PUZZLE GAME                       \n"
-                  << "=====================================================================" 
-                  << Color::RESET << "\n";
-        std::cout << Color::BOLD << "Commands:\n" << Color::RESET;
+        std::cout << "\n" << Color::BOLD << "Commands:\n" << Color::RESET;
         std::cout << "  " << Color::BRIGHT_CYAN << "<ClueCode> <WORD>" << Color::RESET 
                   << " : Answer a clue (e.g. '1A APPLE' or '2D WATER')\n";
         std::cout << "  " << Color::BRIGHT_CYAN << "hint" << Color::RESET 
                   << "              : Randomly reveal one unsolved letter (-15 pts)\n";
+        std::cout << "  " << Color::BRIGHT_CYAN << "hint <ClueCode>" << Color::RESET 
+                  << "   : Reveal a letter for a specific clue (-20 pts, e.g. 'hint 1A')\n";
         std::cout << "  " << Color::BRIGHT_CYAN << "clues" << Color::RESET 
                   << "             : Redisplay clue list\n";
         std::cout << "  " << Color::BRIGHT_CYAN << "leaderboard" << Color::RESET 
@@ -287,7 +341,12 @@ public:
                 std::cout << Color::YELLOW << ">> Exiting game. Goodbye!\n" << Color::RESET;
                 return;
             } else if (lowerCmd == "hint") {
-                provideHint();
+                std::string targetClue;
+                if (ss >> targetClue) {
+                    provideHint(targetClue);
+                } else {
+                    provideHint();
+                }
             } else if (lowerCmd == "clues") {
                 displayClues();
             } else if (lowerCmd == "leaderboard") {
