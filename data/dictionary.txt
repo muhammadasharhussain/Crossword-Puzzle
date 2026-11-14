@@ -1,0 +1,74 @@
+ARRAY,Contiguous memory data structure
+VECTOR,Dynamic size sequential array
+LIST,Sequence of nodes linked by pointers
+STACK,LIFO data structure for last in first out
+QUEUE,FIFO data structure for first in first out
+DEQUE,Double ended queue structure
+TREE,Hierarchical non linear data structure
+BINARY,Tree where each node has at most two children
+HEAP,Complete binary tree satisfying order property
+GRAPH,Non linear structure with vertices and edges
+NODE,Fundamental building block containing data and links
+POINTER,Variable storing memory address of another
+SEARCH,Algorithm to find an item in collection
+SORT,Algorithm to arrange elements in order
+MERGE,Divide and conquer sorting algorithm
+QUICK,Partition based fast sorting algorithm
+BUBBLE,Simple comparison based sorting method
+INSERT,Placing an element into a collection
+DELETE,Removing an element from a collection
+RECURSION,Function calling itself with base case
+ITERATION,Repetitive execution of a loop
+ROOT,Topmost node of a tree
+LEAF,Node with no children in a tree
+EDGE,Connection between two vertices in a graph
+VERTEX,Individual node or point in a graph
+PATH,Sequence of edges connecting vertices
+CYCLE,Path starting and ending at same vertex
+DEGREE,Number of edges incident on a vertex
+BREADTH,Level order graph traversal technique
+DEPTH,Traversal exploring as deep as possible first
+VISITED,Array tracking explored nodes in traversal
+PARENT,Node immediately above in tree hierarchy
+CHILD,Node directly below another in a tree
+HEIGHT,Length of longest path from node to leaf
+LEVEL,Distance of a node from the root node
+INORDER,Traversal visiting left root right
+PREORDER,Traversal visiting root left right
+POSTORDER,Traversal visiting left right root
+BALANCE,Property maintaining height in balanced trees
+HASH,Function mapping keys to table buckets
+BUCKET,Slot in a hash table holding entries
+COLLISION,Two distinct keys hashing to same index
+CHAINING,Collision resolution using linked list
+PROBING,Open addressing search for vacant slots
+KEY,Identifier used for accessing data values
+VALUE,Content associated with a key in maps
+INDEX,Numerical position in an array
+MEMORY,Physical location where variables reside
+OVERFLOW,Exceeding maximum allocated capacity
+UNDERFLOW,Attempting to remove from empty structure
+DYNAMIC,Memory allocated at runtime on the heap
+STATIC,Fixed compile time allocation
+COMPLEXITY,Measure of resource consumption in algorithm
+ORDER,Growth rate notation representing bound
+OPTIMAL,Most efficient solution for a given problem
+PIVOT,Element chosen in quicksort for partition
+SWAP,Exchanging values of two storage locations
+DIVIDE,Splitting problem into smaller subproblems
+CONQUER,Solving subproblems recursively
+ADJACENCY,Matrix or list representing graph edges
+MATRIX,Two dimensional array representation
+TABLE,Structured tabular arrangement of data
+STRING,Sequential sequence of characters
+CHARACTER,Single alphabet symbol or glyph
+CROSSWORD,Word puzzle formed on intersecting grid
+CLUE,Hint provided to solve a puzzle word
+PUZZLE,Game or problem testing ingenuity
+SCORE,Numerical points earned in a game
+HINT,Assistance revealing hidden puzzle letters
+SOLVE,Complete the puzzle successfully
+BOARD,Two dimensional grid hosting the letters
+VALID,State conforming to puzzle layout rules
+EMPTY,Cell containing no letter yet
+FILLED,Cell occupied by a puzzle character
