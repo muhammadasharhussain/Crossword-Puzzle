@@ -2,22 +2,19 @@
 #include "types.h"
 #include <string>
 #include <vector>
-#include <unordered_map>
 #include <fstream>
 #include <sstream>
 #include <algorithm>
 #include <random>
 
+// Week 1 DSA: Arrays and Vector ADT (No Hash Maps / Hashing)
 class Dictionary {
 private:
     std::vector<WordEntry> words;
-    // Map character -> list of indices in 'words' that contain this character
-    std::unordered_map<char, std::vector<int>> letterIndexMap;
 
 public:
     bool loadFromFile(const std::string& filepath) {
         words.clear();
-        letterIndexMap.clear();
 
         std::ifstream file(filepath);
         if (!file.is_open()) {
@@ -37,14 +34,7 @@ public:
             if (std::getline(ss, word, ',') && std::getline(ss, clue)) {
                 // Convert word to uppercase
                 std::transform(word.begin(), word.end(), word.begin(), ::toupper);
-                
-                int wordIdx = static_cast<int>(words.size());
                 words.push_back({word, clue});
-
-                // Index each character for fast intersection lookup
-                for (char ch : word) {
-                    letterIndexMap[ch].push_back(wordIdx);
-                }
             }
         }
         return !words.empty();

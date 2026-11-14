@@ -1,6 +1,6 @@
 # Crossword Puzzle DSA Project: Comprehensive Architecture & Viva Guide
 **Course:** CT159 Data Structures, Algorithms & Applications (NEDUET)  
-**Topics Covered:** Weeks 1 – 13  
+**Strict Syllabus Scope:** Weeks 1 – 13 (No Hash Tables / Hash Maps — strictly within course outline)  
 **Repository:** [muhammadasharhussain/Crossword-Puzzle](https://github.com/muhammadasharhussain/Crossword-Puzzle)
 
 ---
@@ -10,7 +10,7 @@
 2. [Data Structure Curriculum Mapping (Weeks 1 to 13)](#2-data-structure-curriculum-mapping-weeks-1-to-13)
 3. [File-by-File Detailed Code & Variable Walkthrough](#3-file-by-file-detailed-code--variable-walkthrough)
    - [src/types.h](#file-1-srctypesh--data-types--models)
-   - [src/dictionary.h](#file-2-srcdictionaryh--file-loading--hash-indexing)
+   - [src/dictionary.h](#file-2-srcdictionaryh--sequential-vector-adt-week-1)
    - [src/grid.h](#file-3-srcgridh--2d-matrix-adts--reference-counting)
    - [src/generator.h](#file-4-srcgeneratorh--backtracking-generator--max-heap)
    - [src/graph.h](#file-5-srcgraphh--graph-representation--bfs-connectivity)
@@ -24,7 +24,7 @@
 
 ## 1. Executive Summary & High-Level Architecture
 
-The CLI Crossword Puzzle game is an interactive terminal application engineered in **C++17**. It automatically loads word-clue pairs from disk, dynamically synthesizes a valid crossword layout using **backtracking and priority queues**, models word intersections as an **undirected graph** to guarantee connectivity via **Breadth-First Search (BFS)**, and records player high scores in a custom **Binary Search Tree (BST)** rendered through **reverse-inorder traversal**.
+The CLI Crossword Puzzle game is an interactive terminal application engineered in **C++17**. It strictly adheres to the course outline up to **Week 13**. All words are stored in sequential vector/array ADTs (no hash maps). It dynamically synthesizes a valid crossword layout using **backtracking and priority queues (Max-Heap)**, models word intersections as an **undirected graph** to guarantee connectivity via **Breadth-First Search (BFS)** using a queue ADT, and records player high scores in a custom **Binary Search Tree (BST)** rendered through **reverse-inorder traversal**.
 
 ### Architectural Block Diagram
 
@@ -46,10 +46,10 @@ The CLI Crossword Puzzle game is an interactive terminal application engineered 
 |  Dictionary     |  |   CrosswordGrid    |  | CrosswordGenerator|  | CrosswordGraph      |
 | (dictionary.h)  |  |    (src/grid.h)    |  | (src/generator.h) |  |   (src/graph.h)     |
 | - Loads file    |  | - 15x15 char board |  | - Backtracking    |  | - Adjacency list    |
-| - Character     |  | - uses[r][c] ref   |  | - Max-Heap order  |  | - BFS queue         |
-|   index hash-map|  |   counter          |  | - Placement stack |  | - Verifies 1 island |
-+-----------------+  | - reveal masks     |  +-------------------+  +---------------------+
-                     +--------------------+                                |
+| - Sequential    |  | - uses[r][c] ref   |  | - Max-Heap order  |  | - BFS queue         |
+|   Array/Vector  |  |   counter          |  | - Placement stack |  | - Verifies 1 island |
+|   (Week 1 ADT)  |  | - reveal masks     |  +-------------------+  +---------------------+
++-----------------+  +--------------------+                                |
                                                                    +-------v-------------+
                                                                    |  LeaderboardBST     |
                                                                    |    (src/bst.h)      |
@@ -68,8 +68,8 @@ The CLI Crossword Puzzle game is an interactive terminal application engineered 
 
 | Week | Data Structure / Algorithm | Used In | Why Selected? | Time Complexity | Space Complexity |
 |---|---|---|---|---|---|
-| **Week 1** | 2D Arrays / Matrices | `grid.h` (`CrosswordGrid`) | Direct coordinate random access to board cells `(r, c)` | Access: $O(1)$ | $O(N^2)$ where $N=15$ |
-| **Week 2-3** | Linked Nodes & Dynamic Pointers | `bst.h` (`BSTNode`) | Dynamic node allocation for tree-based score ranking | Node creation: $O(1)$ | $O(M)$ nodes |
+| **Week 1** | ADTs, Arrays & Vectors | `dictionary.h`, `grid.h` | Contiguous sequential storage for words; direct coordinate random access `(r, c)` | Access: $O(1)$ | $O(N)$ words, $O(15^2)$ board |
+| **Week 2-3** | Linked Nodes & Pointers | `bst.h` (`BSTNode`) | Dynamic node linking for tree-based score ranking | Node creation: $O(1)$ | $O(M)$ nodes |
 | **Week 4** | Recursion & Stacks | `generator.h` (`std::stack`) | Backtracking algorithm to place words and undo invalid placement choices | Push/Pop: $O(1)$ | $O(W)$ where $W$ is words placed |
 | **Week 5** | Queues (FIFO) | `graph.h` (`std::queue`) | Level-order BFS traversal to verify puzzle connectivity | Enqueue/Dequeue: $O(1)$ | $O(V)$ where $V$ is words |
 | **Week 6-7** | Sorting (Quick/Merge Sort) | `generator.h` (`std::sort`) | Orders placed words top-to-bottom, left-to-right for standard clue numbering | $O(V \log V)$ | $O(\log V)$ auxiliary |
@@ -107,7 +107,7 @@ struct WordEntry {
     std::string clue;
 };
 ```
-* **Explanation:** Simple dictionary container mapping an uppercase answer word to its clue sentence.
+* **Explanation:** Sequential dictionary item holding the answer word and its clue definition.
 
 ```cpp
 struct PlacedWord {
@@ -151,16 +151,12 @@ struct LeaderboardEntry {
 
 ---
 
-### File 2: `src/dictionary.h` — File Loading & Hash Indexing
+### File 2: `src/dictionary.h` — Sequential Vector ADT (Week 1)
 
-* **DSA Concepts:** Arrays, Linear scan, Hash Tables / Inverted Index.
+* **DSA Concepts:** Week 1 Sequential Vector ADT, Array traversal, String parsing. **No hash structures used.**
 
 #### Class Variables:
-* `std::vector<WordEntry> words`: Dynamic array storing loaded word-clue objects.
-* `std::unordered_map<char, std::vector<int>> letterIndexMap`: **Inverted Index Hash Table**.
-  * **Key:** A letter character (e.g., `'E'`).
-  * **Value:** A list of array indices in `words` that contain that character.
-  * **Efficiency:** When the generator wants to cross an existing letter on the board, it looks up candidates in average $O(1)$ time instead of scanning all dictionary entries linearly ($O(N)$).
+* `std::vector<WordEntry> words`: Dynamic array storing loaded word-clue objects contiguously in memory.
 
 #### Methods:
 * `bool loadFromFile(const std::string& filepath)`:
@@ -168,7 +164,7 @@ struct LeaderboardEntry {
   2. Strips Windows carriage return characters (`\r`).
   3. Parses each line using `std::stringstream` with `,` as delimiter.
   4. Capitalizes the word using `std::transform(..., ::toupper)`.
-  5. Populates both `words` vector and `letterIndexMap`.
+  5. Appends the entry to `words`.
 * `std::vector<WordEntry> getRandomSubset(size_t count, unsigned int seed)`:
   Shuffles a copy of dictionary words using Fisher-Yates (`std::shuffle`) with a pseudorandom Mersenne Twister engine (`std::mt19937`).
 
@@ -210,7 +206,7 @@ struct LeaderboardEntry {
 1. **Shuffles** dictionary words to ensure every play session generates a new puzzle.
 2. **Anchor Placement:** Word 0 is placed horizontally in the center of the board ($row = 7$) with zero crossing restrictions.
 3. **Candidate Evaluation:**
-   For each remaining word, scans all $15 \times 15$ coordinates and both directions.
+   For each candidate word, scans all $15 \times 15$ coordinates and both directions.
    If legal, creates a `CandidatePlacement` with its calculated crossings and inserts it into a `std::priority_queue<CandidatePlacement>` (**Max-Heap**).
 4. **Greedy Selection:**
    Pops `maxHeap.top()` to select the candidate coordinate that maximizes crossword crossings. Commits the word to the grid and pushes its state onto an undo stack.
