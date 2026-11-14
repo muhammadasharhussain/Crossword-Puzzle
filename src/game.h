@@ -12,6 +12,23 @@
 #include <algorithm>
 #include <sstream>
 
+// ANSI color escape sequences
+namespace Color {
+    const char* const RESET       = "\033[0m";
+    const char* const BOLD        = "\033[1m";
+    const char* const DIM         = "\033[2m";
+    const char* const RED         = "\033[31m";
+    const char* const GREEN       = "\033[32m";
+    const char* const YELLOW      = "\033[33m";
+    const char* const BLUE        = "\033[34m";
+    const char* const MAGENTA     = "\033[35m";
+    const char* const CYAN        = "\033[36m";
+    const char* const WHITE       = "\033[37m";
+    const char* const BG_DARK     = "\033[48;5;236m";
+    const char* const BRIGHT_CYAN = "\033[96m";
+    const char* const BRIGHT_YEL  = "\033[93m";
+}
+
 class CrosswordGame {
 private:
     CrosswordGrid grid;
@@ -32,14 +49,14 @@ public:
         leaderboard.loadFromFile(leaderboardFile);
 
         if (!dictionary.loadFromFile(dictPath)) {
-            std::cout << "[Error] Could not load dictionary from " << dictPath << "\n";
+            std::cout << Color::RED << "[Error] Could not load dictionary from " << dictPath << Color::RESET << "\n";
             return false;
         }
 
         // Generate puzzle with 6 to 8 words
         bool success = false;
         std::random_device rd;
-        for (int attempt = 0; attempt < 20; ++attempt) {
+        for (int attempt = 0; attempt < 25; ++attempt) {
             unsigned int seed = rd() + attempt * 101;
             if (CrosswordGenerator::generate(dictionary.getAllWords(), 7, grid, placements, seed)) {
                 // Check graph connectivity
@@ -52,7 +69,7 @@ public:
         }
 
         if (!success) {
-            std::cout << "[Warning] Generating fallback puzzle...\n";
+            std::cout << Color::YELLOW << "[Notice] Generating standard layout...\n" << Color::RESET;
             CrosswordGenerator::generate(dictionary.getAllWords(), 5, grid, placements, 42);
         }
 
@@ -63,59 +80,77 @@ public:
     }
 
     void displayBoard() const {
-        std::cout << "\n======================== CROSSWORD PUZZLE ========================\n";
+        std::cout << "\n" << Color::CYAN << Color::BOLD 
+                  << "========================== CROSSWORD PUZZLE ==========================" 
+                  << Color::RESET << "\n";
+        
         std::cout << "     ";
         for (int c = 0; c < GRID_SIZE; ++c) {
-            std::cout << std::setw(2) << c << " ";
+            std::cout << Color::DIM << std::setw(2) << c << " " << Color::RESET;
         }
-        std::cout << "\n    +" << std::string(GRID_SIZE * 3, '-') << "+\n";
+        std::cout << "\n    " << Color::DIM << "+" << std::string(GRID_SIZE * 3, '-') << "+" << Color::RESET << "\n";
 
         for (int r = 0; r < GRID_SIZE; ++r) {
-            std::cout << std::setw(2) << r << "  |";
+            std::cout << Color::DIM << std::setw(2) << r << "  |" << Color::RESET;
             for (int c = 0; c < GRID_SIZE; ++c) {
                 char ch = grid.getChar(r, c);
                 if (ch == ' ') {
-                    std::cout << " . "; // Empty/unused cell
+                    // Empty cell outside puzzle: clean space (no fullstops)
+                    std::cout << "   ";
                 } else if (grid.isRevealed(r, c)) {
-                    std::cout << " " << ch << " "; // Revealed letter
+                    // Solved/revealed letter in bright bold green
+                    std::cout << Color::GREEN << Color::BOLD << " " << ch << " " << Color::RESET;
                 } else {
                     // Check if a clue starts at this position
                     int clueNum = getClueStartingAt(r, c);
                     if (clueNum > 0) {
+                        // Clue number in bold yellow
+                        std::cout << Color::YELLOW << Color::BOLD;
                         if (clueNum < 10) std::cout << " " << clueNum << " ";
                         else std::cout << clueNum << " ";
+                        std::cout << Color::RESET;
                     } else {
-                        std::cout << " - "; // Hidden puzzle cell
+                        // Unsolved puzzle slot: clean dash in cyan
+                        std::cout << Color::CYAN << " - " << Color::RESET;
                     }
                 }
             }
-            std::cout << "|\n";
+            std::cout << Color::DIM << "|" << Color::RESET << "\n";
         }
-        std::cout << "    +" << std::string(GRID_SIZE * 3, '-') << "+\n";
+        std::cout << "    " << Color::DIM << "+" << std::string(GRID_SIZE * 3, '-') << "+" << Color::RESET << "\n";
     }
 
     void displayClues() const {
-        std::cout << "\n============================= CLUES =============================\n";
-        std::cout << "--- ACROSS ---\n";
+        std::cout << "\n" << Color::MAGENTA << Color::BOLD 
+                  << "=============================== CLUES ===============================" 
+                  << Color::RESET << "\n";
+        
+        std::cout << Color::BRIGHT_YEL << Color::BOLD << "--- ACROSS ---" << Color::RESET << "\n";
         for (const auto& pw : placements) {
             if (pw.dir == ACROSS) {
-                std::cout << "  " << pw.clueNumber << "A. " << pw.clue;
-                if (pw.isSolved) std::cout << " [SOLVED: " << pw.word << "]";
-                else std::cout << " (" << pw.word.length() << " letters)";
+                std::cout << Color::BOLD << "  " << pw.clueNumber << "A. " << Color::RESET << pw.clue;
+                if (pw.isSolved) {
+                    std::cout << Color::GREEN << Color::BOLD << " [SOLVED: " << pw.word << "]" << Color::RESET;
+                } else {
+                    std::cout << Color::DIM << " (" << pw.word.length() << " letters)" << Color::RESET;
+                }
                 std::cout << "\n";
             }
         }
 
-        std::cout << "\n--- DOWN ---\n";
+        std::cout << "\n" << Color::BRIGHT_YEL << Color::BOLD << "--- DOWN ---" << Color::RESET << "\n";
         for (const auto& pw : placements) {
             if (pw.dir == DOWN) {
-                std::cout << "  " << pw.clueNumber << "D. " << pw.clue;
-                if (pw.isSolved) std::cout << " [SOLVED: " << pw.word << "]";
-                else std::cout << " (" << pw.word.length() << " letters)";
+                std::cout << Color::BOLD << "  " << pw.clueNumber << "D. " << Color::RESET << pw.clue;
+                if (pw.isSolved) {
+                    std::cout << Color::GREEN << Color::BOLD << " [SOLVED: " << pw.word << "]" << Color::RESET;
+                } else {
+                    std::cout << Color::DIM << " (" << pw.word.length() << " letters)" << Color::RESET;
+                }
                 std::cout << "\n";
             }
         }
-        std::cout << "=================================================================\n";
+        std::cout << Color::MAGENTA << "=====================================================================" << Color::RESET << "\n";
     }
 
     bool isCompleted() const {
@@ -136,7 +171,7 @@ public:
         try {
             clueNum = std::stoi(numPart);
         } catch (...) {
-            std::cout << ">> Invalid clue format! Use e.g. '1A' or '2D'.\n";
+            std::cout << Color::RED << ">> Invalid clue format! Use format like '1A' or '2D'." << Color::RESET << "\n";
             return;
         }
 
@@ -149,28 +184,28 @@ public:
             if (pw.clueNumber == clueNum && pw.dir == targetDir) {
                 found = true;
                 if (pw.isSolved) {
-                    std::cout << ">> Clue " << clueCode << " is already solved!\n";
+                    std::cout << Color::YELLOW << ">> Clue " << clueCode << " is already solved!" << Color::RESET << "\n";
                     return;
                 }
                 if (cleaned == pw.word) {
                     pw.isSolved = true;
-                    // Reveal all letters on grid
                     revealWord(pw);
                     score += 100;
-                    std::cout << ">> Correct! Word \"" << pw.word << "\" placed into the grid! (+100 pts)\n";
+                    std::cout << Color::GREEN << Color::BOLD 
+                              << ">> Correct! Word \"" << pw.word << "\" placed into the grid! (+100 pts)" 
+                              << Color::RESET << "\n";
                 } else {
-                    std::cout << ">> Incorrect guess for " << clueCode << ". Keep trying!\n";
+                    std::cout << Color::RED << ">> Incorrect guess for " << clueCode << ". Keep trying!" << Color::RESET << "\n";
                 }
                 break;
             }
         }
 
         if (!found) {
-            std::cout << ">> Clue \"" << clueCode << "\" not found in current puzzle.\n";
+            std::cout << Color::RED << ">> Clue \"" << clueCode << "\" not found in current puzzle." << Color::RESET << "\n";
         }
     }
 
-    // Hint function: randomly reveals a single unrevealed letter in the grid
     void provideHint() {
         struct UnsolvedCell {
             int r, c;
@@ -190,7 +225,7 @@ public:
         }
 
         if (candidates.empty()) {
-            std::cout << ">> No remaining unrevealed letters to give a hint for!\n";
+            std::cout << Color::YELLOW << ">> No remaining unrevealed letters to give a hint for!" << Color::RESET << "\n";
             return;
         }
 
@@ -203,36 +238,44 @@ public:
         hintsUsed++;
         score = std::max(0, score - 15);
 
-        std::cout << ">> [HINT] Letter '" << grid.getChar(chosen.r, chosen.c)
-                  << "' revealed at (" << chosen.r << ", " << chosen.c << ")! (-15 pts)\n";
+        std::cout << Color::YELLOW << Color::BOLD 
+                  << ">> [HINT] Letter '" << grid.getChar(chosen.r, chosen.c)
+                  << "' revealed at row " << chosen.r << ", col " << chosen.c 
+                  << "! (-15 pts)" << Color::RESET << "\n";
 
-        // Check if any word became fully revealed
         checkAndUpdateFullyRevealedWords();
     }
 
     void run() {
-        std::cout << "\n============================================================\n";
-        std::cout << "            WELCOME TO DSA CLI CROSSWORD PUZZLE             \n";
-        std::cout << "============================================================\n";
-        std::cout << "Commands:\n";
-        std::cout << "  <ClueCode> <WORD>  : Answer a clue (e.g. '1A STACK' or '2D HEAP')\n";
-        std::cout << "  hint               : Randomly reveal one unsolved letter\n";
-        std::cout << "  clues              : Redisplay clue list\n";
-        std::cout << "  leaderboard        : Display top players\n";
-        std::cout << "  quit               : Exit the game\n";
-        std::cout << "============================================================\n";
+        std::cout << "\n" << Color::CYAN << Color::BOLD 
+                  << "=====================================================================\n"
+                  << "                     CLI CROSSWORD PUZZLE GAME                       \n"
+                  << "=====================================================================" 
+                  << Color::RESET << "\n";
+        std::cout << Color::BOLD << "Commands:\n" << Color::RESET;
+        std::cout << "  " << Color::BRIGHT_CYAN << "<ClueCode> <WORD>" << Color::RESET 
+                  << " : Answer a clue (e.g. '1A APPLE' or '2D WATER')\n";
+        std::cout << "  " << Color::BRIGHT_CYAN << "hint" << Color::RESET 
+                  << "              : Randomly reveal one unsolved letter (-15 pts)\n";
+        std::cout << "  " << Color::BRIGHT_CYAN << "clues" << Color::RESET 
+                  << "             : Redisplay clue list\n";
+        std::cout << "  " << Color::BRIGHT_CYAN << "leaderboard" << Color::RESET 
+                  << "       : Display top players from BST\n";
+        std::cout << "  " << Color::BRIGHT_CYAN << "quit" << Color::RESET 
+                  << "              : Exit the game\n";
+        std::cout << Color::CYAN << "=====================================================================" << Color::RESET << "\n";
 
         while (!isCompleted()) {
             displayBoard();
             displayClues();
 
-            std::cout << "\nCurrent Score: " << score << " | Hints Used: " << hintsUsed << "\n";
-            std::cout << "Enter command: > ";
+            std::cout << "\n" << Color::BOLD << "Current Score: " << Color::GREEN << score << Color::RESET 
+                      << Color::BOLD << " | Hints Used: " << Color::YELLOW << hintsUsed << Color::RESET << "\n";
+            std::cout << Color::BOLD << "Enter command: > " << Color::RESET;
 
             std::string line;
             if (!std::getline(std::cin, line)) break;
 
-            // Trim whitespace
             std::stringstream ss(line);
             std::string cmd;
             if (!(ss >> cmd)) continue;
@@ -241,7 +284,7 @@ public:
             std::transform(lowerCmd.begin(), lowerCmd.end(), lowerCmd.begin(), ::tolower);
 
             if (lowerCmd == "quit" || lowerCmd == "exit") {
-                std::cout << ">> Exiting game. Goodbye!\n";
+                std::cout << Color::YELLOW << ">> Exiting game. Goodbye!\n" << Color::RESET;
                 return;
             } else if (lowerCmd == "hint") {
                 provideHint();
@@ -254,7 +297,9 @@ public:
                 if (ss >> wordGuess) {
                     handleAnswer(cmd, wordGuess);
                 } else {
-                    std::cout << ">> Unknown command or missing word guess. Format: <clue> <word> (e.g. '1A ARRAY')\n";
+                    std::cout << Color::RED 
+                              << ">> Unknown command or missing word guess. Format: <clue> <word> (e.g. '1A APPLE')\n" 
+                              << Color::RESET;
                 }
             }
         }
@@ -265,8 +310,12 @@ public:
         score = std::max(0, score + 200 - (secondsTaken / 3));
 
         displayBoard();
-        std::cout << "\n🎉 CONGRATULATIONS! You have completed the entire crossword puzzle! 🎉\n";
-        std::cout << "Final Score: " << score << "\n";
+        std::cout << "\n" << Color::GREEN << Color::BOLD 
+                  << "=====================================================================\n"
+                  << "    CONGRATULATIONS! You have completed the entire crossword puzzle! \n"
+                  << "=====================================================================" 
+                  << Color::RESET << "\n";
+        std::cout << "Final Score: " << Color::GREEN << Color::BOLD << score << Color::RESET << "\n";
         std::cout << "Time Elapsed: " << secondsTaken << " seconds\n";
 
         std::cout << "\nEnter your name for the leaderboard: ";
@@ -312,7 +361,9 @@ private:
             }
             if (allRevealed) {
                 pw.isSolved = true;
-                std::cout << ">> [Auto-Solved] \"" << pw.word << "\" is now completely revealed!\n";
+                std::cout << Color::GREEN << Color::BOLD 
+                          << ">> [Auto-Solved] \"" << pw.word << "\" is now completely revealed!" 
+                          << Color::RESET << "\n";
             }
         }
     }

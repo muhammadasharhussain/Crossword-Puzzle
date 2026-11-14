@@ -1,74 +1,80 @@
-ARRAY,Contiguous memory data structure
-VECTOR,Dynamic size sequential array
-LIST,Sequence of nodes linked by pointers
-STACK,LIFO data structure for last in first out
-QUEUE,FIFO data structure for first in first out
-DEQUE,Double ended queue structure
-TREE,Hierarchical non linear data structure
-BINARY,Tree where each node has at most two children
-HEAP,Complete binary tree satisfying order property
-GRAPH,Non linear structure with vertices and edges
-NODE,Fundamental building block containing data and links
-POINTER,Variable storing memory address of another
-SEARCH,Algorithm to find an item in collection
-SORT,Algorithm to arrange elements in order
-MERGE,Divide and conquer sorting algorithm
-QUICK,Partition based fast sorting algorithm
-BUBBLE,Simple comparison based sorting method
-INSERT,Placing an element into a collection
-DELETE,Removing an element from a collection
-RECURSION,Function calling itself with base case
-ITERATION,Repetitive execution of a loop
-ROOT,Topmost node of a tree
-LEAF,Node with no children in a tree
-EDGE,Connection between two vertices in a graph
-VERTEX,Individual node or point in a graph
-PATH,Sequence of edges connecting vertices
-CYCLE,Path starting and ending at same vertex
-DEGREE,Number of edges incident on a vertex
-BREADTH,Level order graph traversal technique
-DEPTH,Traversal exploring as deep as possible first
-VISITED,Array tracking explored nodes in traversal
-PARENT,Node immediately above in tree hierarchy
-CHILD,Node directly below another in a tree
-HEIGHT,Length of longest path from node to leaf
-LEVEL,Distance of a node from the root node
-INORDER,Traversal visiting left root right
-PREORDER,Traversal visiting root left right
-POSTORDER,Traversal visiting left right root
-BALANCE,Property maintaining height in balanced trees
-HASH,Function mapping keys to table buckets
-BUCKET,Slot in a hash table holding entries
-COLLISION,Two distinct keys hashing to same index
-CHAINING,Collision resolution using linked list
-PROBING,Open addressing search for vacant slots
-KEY,Identifier used for accessing data values
-VALUE,Content associated with a key in maps
-INDEX,Numerical position in an array
-MEMORY,Physical location where variables reside
-OVERFLOW,Exceeding maximum allocated capacity
-UNDERFLOW,Attempting to remove from empty structure
-DYNAMIC,Memory allocated at runtime on the heap
-STATIC,Fixed compile time allocation
-COMPLEXITY,Measure of resource consumption in algorithm
-ORDER,Growth rate notation representing bound
-OPTIMAL,Most efficient solution for a given problem
-PIVOT,Element chosen in quicksort for partition
-SWAP,Exchanging values of two storage locations
-DIVIDE,Splitting problem into smaller subproblems
-CONQUER,Solving subproblems recursively
-ADJACENCY,Matrix or list representing graph edges
-MATRIX,Two dimensional array representation
-TABLE,Structured tabular arrangement of data
-STRING,Sequential sequence of characters
-CHARACTER,Single alphabet symbol or glyph
-CROSSWORD,Word puzzle formed on intersecting grid
-CLUE,Hint provided to solve a puzzle word
-PUZZLE,Game or problem testing ingenuity
-SCORE,Numerical points earned in a game
-HINT,Assistance revealing hidden puzzle letters
-SOLVE,Complete the puzzle successfully
-BOARD,Two dimensional grid hosting the letters
-VALID,State conforming to puzzle layout rules
-EMPTY,Cell containing no letter yet
-FILLED,Cell occupied by a puzzle character
+APPLE,A common red or green fruit
+WATER,Clear liquid essential for life
+BREAD,Baked food made from flour and yeast
+CHAIR,A piece of furniture for sitting
+TABLE,Furniture with a flat top and legs
+HOUSE,A building for human habitation
+CLOCK,Device used to measure and show time
+LIGHT,Natural agent that stimulates sight
+NIGHT,The period of darkness in each day
+RIVER,A large natural stream of water
+OCEAN,A very large expanse of sea
+EARTH,The planet on which we live
+PLANT,A living organism that grows in earth
+FLOWER,The blossom of a plant
+GARDEN,Plot of ground where plants are grown
+WINDOW,An opening in a wall to let in light
+DOOR,Movable barrier for closing an entrance
+STREET,A public road in a city or town
+SCHOOL,An institution for educating children
+FRIEND,A person with whom one has a bond
+FAMILY,A group of people related to one another
+MARKET,A place where goods are bought and sold
+MONEY,Medium of exchange in coins or notes
+PAPER,Material used for writing or printing
+PENCIL,Writing utensil with a graphite core
+COFFEE,Popular hot caffeinated beverage
+SUGAR,Sweet crystalline substance
+ORANGE,Citrus fruit that is round and orange
+BANANA,Long curved fruit with yellow skin
+SUMMER,The warmest season of the year
+WINTER,The coldest season of the year
+SPRING,Season between winter and summer
+AUTUMN,Season between summer and winter
+DOCTOR,Person qualified to treat the sick
+NURSE,Person trained to care for the sick
+BRIDGE,Structure carrying a road across water
+TRAIN,Series of connected railway cars
+PLANE,Powered flying vehicle with fixed wings
+MUSIC,Vocal or instrumental sounds in harmony
+GUITAR,Stringed musical instrument
+SILVER,Precious shiny metallic element
+YELLOW,Color between green and orange
+PURPLE,Color between red and blue
+ANIMAL,A living organism that feeds on organic matter
+RABBIT,Small burrowing animal with long ears
+TURTLE,Slow moving reptile with a hard shell
+FOREST,A large area covered chiefly with trees
+DESERT,A dry barren area of land
+MOUNTAIN,A large natural elevation of earth
+ISLAND,A piece of land surrounded by water
+CLOUD,Visible mass of condensed water vapor
+STORM,A violent disturbance of the atmosphere
+MORNING,The period of time between midnight and noon
+EVENING,The period of time at the end of the day
+MIRROR,Reflective surface that forms an image
+BOTTLE,Container with a narrow neck for liquids
+PILLOW,A soft cushion for the head in bed
+CAMERA,Device for recording visual images
+RADIO,Apparatus for broadcasting sound
+STATION,A regular stopping place for trains or buses
+CASTLE,A large fortified medieval building
+PALACE,A large impressive official residence
+SHADOW,A dark area produced by blocking light
+BLANKET,A large piece of warm woolen material
+FARMER,A person who owns or manages a farm
+BUTTER,A yellow fatty food made from milk
+CHEESE,Food made from the pressed curds of milk
+CANDLE,A cylinder of wax with a central wick
+SILENT,Not making or accompanied by any sound
+HONEST,Free of deceit and truthful
+POLITE,Having or showing good manners
+ACTIVE,Engaging or ready to engage in action
+CLEVER,Quick to understand learn and devise ideas
+GENTLE,Mild in temperament or behavior
+HUNGRY,Feeling or displaying the need for food
+THIRSTY,Feeling a need to drink liquid
+PEACE,Freedom from disturbance or conflict
+ENERGY,The strength and vitality required for activity
+WHEEL,Circular object that revolves on an axle
+ENGINE,A machine with moving parts that produces power
