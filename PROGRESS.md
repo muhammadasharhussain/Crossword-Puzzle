@@ -20,3 +20,4 @@
 
 ## 4. Open Decisions & Notes
 - Architecture review and initial design questions awaiting user feedback.
+
