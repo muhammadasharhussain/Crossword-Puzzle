@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Crossword Puzzle Game - DSA Project Report</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+  :root {
+    --bg-page: #FAF9F6;
+    --paper-card: #FFFFFF;
+    --sand-primary: #E8BF9E;
+    --sand-light: #F7EBE1;
+    --sand-dark: #A36B46;
+    --charcoal-dark: #2D2723;
+    --charcoal-mid: #4A423D;
+    --charcoal-light: #706760;
+    --cream-accent: #EFE4D8;
+    --border-frame: #3E3631;
+    --code-bg: #1E1A18;
+    --code-text: #F3ECE6;
+    --border-soft: #E2D7CF;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #EBE6E0;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    color: var(--charcoal-dark);
+    line-height: 1.65;
+    padding: 30px 15px;
+  }
+
+  .report-sheet {
+    max-width: 900px;
+    margin: 0 auto 40px auto;
+    background: var(--paper-card);
+    box-shadow: 0 10px 35px rgba(45,39,35,0.12);
+    position: relative;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  /* Print optimizations */
+  @media print {
+    body { background: transparent; padding: 0; }
+    .report-sheet { box-shadow: none; margin: 0; max-width: 100%; border-radius: 0; page-break-after: always; }
+    .no-print { display: none !important; }
+  }
+
+  /* COVER PAGE */
+  .cover-sheet {
+    min-height: 1180px;
+    padding: 55px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background: #FAF7F2;
+    border: 1px solid var(--border-soft);
+  }
+
+  .cover-frame {
+    border: 3px solid var(--border-frame);
+    padding: 10px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+  }
+
+  .cover-inner-border {
+    border: 1.2px solid var(--border-frame);
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 50px 35px 35px 35px;
+    text-align: center;
+  }
+
+  .cover-header-tag {
+    font-family: 'Cinzel', serif;
+    font-size: 15px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--charcoal-mid);
+    font-style: italic;
+    margin-bottom: 8px;
+  }
+
+  .cover-sub-tag {
+    font-family: 'Cinzel', serif;
+    font-size: 19px;
+    font-weight: 700;
+    color: var(--charcoal-dark);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  .cover-title-box {
+    margin: 50px 0;
+  }
+
+  .cover-main-title {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 48px;
+    font-weight: 800;
+    letter-spacing: 3px;
+    line-height: 1.15;
+    color: var(--charcoal-dark);
+    text-transform: uppercase;
+  }
+
+  .cover-project-subtitle {
+    margin-top: 25px;
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--charcoal-light);
+    letter-spacing: 1px;
+    max-width: 580px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .cover-footer-banner {
+    background: var(--sand-primary);
+    padding: 35px 25px;
+    border-radius: 4px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    border: 1px solid #D5A781;
+  }
+
+  .badge-icon {
+    width: 54px;
+    height: 54px;
+    border-radius: 50%;
+    background: #FFFFFF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+  }
+
+  .badge-icon svg { width: 28px; height: 28px; fill: var(--charcoal-dark); }
+
+  .meta-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    width: 100%;
+    margin-top: 10px;
+    text-align: left;
+    font-size: 13.5px;
+    color: var(--charcoal-dark);
+  }
+
+  .meta-grid div { background: rgba(255,255,255,0.65); padding: 8px 14px; border-radius: 4px; }
+  .meta-grid strong { color: var(--border-frame); display: block; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; }
+
+  /* INNER PAGES */
+  .inner-sheet {
+    min-height: 1180px;
+    padding: 60px 65px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .page-header-band {
+    border-bottom: 2px solid var(--sand-primary);
+    padding-bottom: 15px;
+    margin-bottom: 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+
+  .page-header-band h2 {
+    font-family: 'Cinzel', serif;
+    font-size: 22px;
+    color: var(--charcoal-dark);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+  }
+
+  .page-header-band span {
+    font-size: 12px;
+    color: var(--charcoal-light);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .content-section {
+    flex: 1;
+  }
+
+  h3 {
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--charcoal-dark);
+    margin: 22px 0 10px 0;
+    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  h3::before {
+    content: '';
+    display: inline-block;
+    width: 5px;
+    height: 17px;
+    background: var(--sand-primary);
+    border-radius: 2px;
+  }
+
+  p {
+    font-size: 13.8px;
+    color: var(--charcoal-mid);
+    margin-bottom: 12px;
+    text-align: justify;
+  }
+
+  /* Custom Styled Table Matching Prompt Aesthetic */
+  .styled-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 18px 0;
+    font-size: 13px;
+    border-radius: 4px;
+    overflow: hidden;
+    border: 1px solid var(--border-soft);
+  }
+
+  .styled-table thead tr {
+    background: var(--charcoal-dark);
+    color: #FFFFFF;
+    text-align: left;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 11.5px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .styled-table th, .styled-table td {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border-soft);
+  }
+
+  .styled-table tbody tr:nth-of-type(even) {
+    background: #FBF8F5;
+  }
+
+  .styled-table tbody tr:hover {
+    background: var(--sand-light);
+  }
+
+  .tag-pill {
+    display: inline-block;
+    padding: 2px 7px;
+    background: var(--sand-primary);
+    color: #2D2723;
+    font-size: 11px;
+    font-weight: 600;
+    border-radius: 3px;
+  }
+
+  /* Diagram Box */
+  .diagram-box {
+    background: #FDFBF7;
+    border: 1.5px dashed var(--sand-primary);
+    border-radius: 6px;
+    padding: 20px;
+    margin: 16px 0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11.8px;
+    color: var(--charcoal-dark);
+    line-height: 1.45;
+    white-space: pre;
+    overflow-x: auto;
+  }
+
+  /* Code Block Styling */
+  .code-container {
+    background: var(--code-bg);
+    color: var(--code-text);
+    padding: 16px 18px;
+    border-radius: 5px;
+    margin: 14px 0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11.8px;
+    line-height: 1.55;
+    position: relative;
+    border-left: 4px solid var(--sand-primary);
+    overflow-x: auto;
+  }
+
+  .code-title {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 11px;
+    color: var(--sand-primary);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+    font-weight: 600;
+  }
+
+  .callout-card {
+    background: var(--sand-light);
+    border-left: 4px solid var(--sand-primary);
+    padding: 14px 18px;
+    border-radius: 4px;
+    margin: 16px 0;
+    font-size: 13.5px;
+  }
+
+  .callout-card strong {
+    color: var(--sand-dark);
+    display: block;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    font-size: 11px;
+    letter-spacing: 1px;
+  }
+
+  /* Checkbox Milestones Box */
+  .milestone-list {
+    list-style: none;
+    margin: 15px 0;
+  }
+
+  .milestone-list li {
+    font-size: 13.5px;
+    color: var(--charcoal-mid);
+    padding: 6px 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .check-square {
+    width: 18px;
+    height: 18px;
+    border-radius: 3px;
+    background: var(--sand-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    color: #FFFFFF;
+  }
+
+  .page-footer {
+    border-top: 1px solid var(--border-soft);
+    padding-top: 15px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 11.5px;
+    color: var(--charcoal-light);
+  }
+
+  .toolbar {
+    max-width: 900px;
+    margin: 0 auto 15px auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .btn {
+    background: var(--charcoal-dark);
+    color: #FFFFFF;
+    padding: 10px 20px;
+    border-radius: 4px;
+    border: none;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    font-size: 13px;
+    transition: background 0.2s;
+  }
+
+  .btn:hover { background: var(--sand-dark); }
+</style>
+</head>
+<body>
+
+<div class="toolbar no-print">
+  <span style="font-size:13.5px; font-weight:600; color:var(--charcoal-dark);">Interactive Printable & Editable DSA Project Report</span>
+  <div style="display:flex; gap:10px;">
+    <button class="btn" onclick="window.print()">Print / Save as PDF</button>
+  </div>
+</div>
+
+<!-- ==================== COVER PAGE ==================== -->
+<div class="report-sheet cover-sheet">
+  <div class="cover-frame">
+    <div class="cover-inner-border">
+      
+      <div>
+        <div class="cover-header-tag">NED University of Engineering & Technology</div>
+        <div class="cover-sub-tag">Department of Computer Science & IT — CT159 DSA</div>
+      </div>
+
+      <div class="cover-title-box">
+        <h1 class="cover-main-title">PROJECT<br>STATUS<br>REPORT</h1>
+        <p class="cover-project-subtitle">CLI Crossword Puzzle Game Architecture, Algorithmic Design & Syllabus Data Structure Implementation</p>
+      </div>
+
+      <div class="cover-footer-banner">
+        <div class="badge-icon">
+          <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+        </div>
+
+        <div class="meta-grid">
+          <div><strong>Project Name</strong>CLI Crossword Game</div>
+          <div><strong>Course Title</strong>Data Structures & Algorithms</div>
+          <div><strong>Repository</strong>github.com/muhammadasharhussain/Crossword-Puzzle</div>
+          <div><strong>Course Outlines</strong>Weeks 1 to 13 (Strictly Adhered)</div>
+          <div><strong>Engine & Target</strong>C++17 / Native Windows Console</div>
+          <div><strong>Evaluation Milestone</strong>Week 14 Project Submission</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ==================== PAGE 2: EXECUTIVE SUMMARY & DSA MATRIX ==================== -->
+<div class="report-sheet inner-sheet">
+  <div>
+    <div class="page-header-band">
+      <h2>1. General Overview & DSA Matrix</h2>
+      <span>Section 1.0 — Architecture</span>
+    </div>
+
+    <div class="content-section">
+      <p>
+        The objective of this project is to architect an interactive Command Line Interface (CLI) Crossword Puzzle game developed in modern C++17. The program dynamically generates a valid, connected crossword from an English vocabulary corpus, coordinates word overlaps, computes candidate coordinates using Priority Queues, validates topology using Graph traversals, and stores high-scores in a dynamic Binary Search Tree.
+      </p>
+
+      <h3>1.1 DSA Course Curriculum Alignment (Weeks 1 – 13)</h3>
+      <table class="styled-table">
+        <thead>
+          <tr>
+            <th>Course Week</th>
+            <th>Data Structure / Technique</th>
+            <th>Implementation Location</th>
+            <th>Time Complexity</th>
+            <th>Space Complexity</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="tag-pill">Week 1</span></td>
+            <td><strong>2D Array / Matrix ADT</strong></td>
+            <td><code>src/grid.h</code> (CrosswordGrid)</td>
+            <td>$O(1)$ random cell access</td>
+            <td>$O(N^2)$ where $N=15$</td>
+          </tr>
+          <tr>
+            <td><span class="tag-pill">Week 1</span></td>
+            <td><strong>Sequential Vector ADT</strong></td>
+            <td><code>src/dictionary.h</code> (Word list)</td>
+            <td>$O(1)$ append / traversal</td>
+            <td>$O(W)$ words in memory</td>
+          </tr>
+          <tr>
+            <td><span class="tag-pill">Week 2-3</span></td>
+            <td><strong>Dynamic Linked Nodes</strong></td>
+            <td><code>src/bst.h</code> (BSTNode pointers)</td>
+            <td>$O(1)$ node allocation</td>
+            <td>$O(M)$ allocated nodes</td>
+          </tr>
+          <tr>
+            <td><span class="tag-pill">Week 4</span></td>
+            <td><strong>Recursion & Stack ADT</strong></td>
+            <td><code>src/generator.h</code> (Backtracking)</td>
+            <td>$O(1)$ push / pop</td>
+            <td>$O(K)$ stack depth</td>
+          </tr>
+          <tr>
+            <td><span class="tag-pill">Week 5</span></td>
+            <td><strong>FIFO Queue ADT</strong></td>
+            <td><code>src/graph.h</code> (BFS component check)</td>
+            <td>$O(1)$ enqueue / dequeue</td>
+            <td>$O(V)$ queue capacity</td>
+          </tr>
+          <tr>
+            <td><span class="tag-pill">Week 6-7</span></td>
+            <td><strong>Sorting (Quick / Merge)</strong></td>
+            <td><code>src/generator.h</code> (Clue numbering)</td>
+            <td>$O(V \log V)$</td>
+            <td>$O(\log V)$ auxiliary</td>
+          </tr>
+          <tr>
+            <td><span class="tag-pill">Week 9</span></td>
+            <td><strong>Tree Traversals</strong></td>
+            <td><code>src/bst.h</code> (Reverse-inorder & Postorder)</td>
+            <td>$O(M)$ traversal</td>
+            <td>$O(H)$ recursion stack</td>
+          </tr>
+          <tr>
+            <td><span class="tag-pill">Week 10</span></td>
+            <td><strong>Binary Heap / Priority Queue</strong></td>
+            <td><code>src/generator.h</code> (Max-Heap)</td>
+            <td>$O(\log K)$ insert / extract</td>
+            <td>$O(K)$ candidate pool</td>
+          </tr>
+          <tr>
+            <td><span class="tag-pill">Week 11-12</span></td>
+            <td><strong>Binary Search Tree (BST)</strong></td>
+            <td><code>src/bst.h</code> (LeaderboardBST)</td>
+            <td>Avg $O(\log M)$, Worst $O(M)$</td>
+            <td>$O(M)$ nodes</td>
+          </tr>
+          <tr>
+            <td><span class="tag-pill">Week 13</span></td>
+            <td><strong>Graph Adjacency List & BFS</strong></td>
+            <td><code>src/graph.h</code> (CrosswordGraph)</td>
+            <td>Graph: $O(V^2)$, BFS: $O(V + E)$</td>
+            <td>$O(V + E)$</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>1.2 Project Milestones Status</h3>
+      <ul class="milestone-list">
+        <li><div class="check-square">&#10003;</div> Native ANSI Color CLI Interface with In-Place Screen Clearing</li>
+        <li><div class="check-square">&#10003;</div> Dynamic Crossword Generator using Max-Heap candidate intersection ranking</li>
+        <li><div class="check-square">&#10003;</div> Graph Connectivity Verification using Breadth-First Search (BFS Queue)</li>
+        <li><div class="check-square">&#10003;</div> BST Leaderboard featuring Reverse Inorder traversal & Postorder memory cleanup</li>
+        <li><div class="check-square">&#10003;</div> Complete elimination of Hash Maps to strictly obey Week 1-13 syllabus constraints</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="page-footer">
+    <span>Department of CS & IT — NED University</span>
+    <span>Page 2</span>
+  </div>
+</div>
+
+<!-- ==================== PAGE 3: SYSTEM ARCHITECTURE & FLOW ==================== -->
+<div class="report-sheet inner-sheet">
+  <div>
+    <div class="page-header-band">
+      <h2>2. System Architecture & Flowchart</h2>
+      <span>Section 2.0 — Engineering Flow</span>
+    </div>
+
+    <div class="content-section">
+      <h3>2.1 Structural Block Diagram</h3>
+      <div class="diagram-box">+-----------------------------------------------------------------------------------------+
+|                                      main.cpp                                           |
+|       - Enables ANSI Virtual Terminal processing on Windows (SetConsoleMode)            |
+|       - Instantiates and starts CrosswordGame                                           |
++-------------------------------------------+---------------------------------------------+
+                                            |
++-------------------------------------------v---------------------------------------------+
+|                                    CrosswordGame (src/game.h)                           |
+|       - Prompts player for Difficulty (Easy: 4 words, Medium: 7, Hard: 10)              |
+|       - Native Windows buffer clearing (FillConsoleOutputCharacter / SetConsoleCursor)  |
+|       - Interactive Game Loop: input parser, timer, hints (random & targeted), score    |
++----+----------------------+-----------------------+----------------------+--------------+
+     |                      |                       |                      |
++----v------------+  +------v-------------+  +------v------------+  +------v--------------+
+|  Dictionary     |  |   CrosswordGrid    |  | CrosswordGenerator|  | CrosswordGraph      |
+| (dictionary.h)  |  |    (src/grid.h)    |  | (src/generator.h) |  |   (src/graph.h)     |
+| - Sequential    |  | - 15x15 char board |  | - Backtracking    |  | - Adjacency list    |
+|   Array/Vector  |  | - uses[r][c] ref   |  | - Max-Heap order  |  | - BFS queue         |
+|   (Week 1 ADT)  |  |   counter          |  | - Placement stack |  | - Verifies 1 island |
++-----------------+  | - reveal masks     |  +-------------------+  +---------------------+
+                     +--------------------+                                |
+                                                                   +-------v-------------+
+                                                                   |  LeaderboardBST     |
+                                                                   |    (src/bst.h)      |
+                                                                   | - Dynamic BST Nodes |
+                                                                   | - Reverse Inorder   |
+                                                                   | - Postorder free    |
++------------------------------------------------------------------+---------------------+
+|                                    src/types.h                                          |
+|      Shared definitions: Direction, WordEntry, PlacedWord, CandidatePlacement           |
++-----------------------------------------------------------------------------------------+</div>
+
+      <h3>2.2 Runtime Execution Flow</h3>
+      <p>
+        When executed, the program initiates execution in <code>main.cpp</code>, configuring the Windows Console to enable Virtual Terminal Processing. The user selects a puzzle difficulty which governs the target word count. The <code>CrosswordGenerator</code> selects anchor words, evaluates placements with a <strong>Max-Heap</strong>, commits them to the 2D grid, and confirms full grid connectedness via <strong>Graph BFS</strong>. The gameplay loop updates the board in-place using native Windows console clearing on every user turn.
+      </p>
+
+      <div class="callout-card">
+        <strong>Zero Hash-Map Guarantee</strong>
+        In strict compliance with the CT159 course outline up to Week 13, all word lookups, dictionaries, and graph representations completely avoid <code>std::unordered_map</code> and hashing techniques, relying exclusively on Sequential Vectors, Pointer Trees, Heaps, and Queues.
+      </div>
+    </div>
+  </div>
+
+  <div class="page-footer">
+    <span>Department of CS & IT — NED University</span>
+    <span>Page 3</span>
+  </div>
+</div>
+
+<!-- ==================== PAGE 4: DETAILED MODULES 1 & 2 ==================== -->
+<div class="report-sheet inner-sheet">
+  <div>
+    <div class="page-header-band">
+      <h2>3. Core Data Structures: Grid & Generator</h2>
+      <span>Section 3.0 — Code Snippets & Logic</span>
+    </div>
+
+    <div class="content-section">
+      <h3>3.1 Grid Reference Counting & Cell Validation (grid.h)</h3>
+      <p>
+        The crossword grid requires dynamic letter sharing between perpendicular intersecting words. If a simple character matrix is used, backtracking or removal of one word inadvertently deletes letters shared by intersecting words. We resolved this via parallel reference counting matrix <code>uses[15][15]</code>.
+      </p>
+
+      <div class="code-container">
+        <div class="code-title">src/grid.h — Reference Counting Implementation</div>
+<pre>void place(const std::string& word, int row, int col, Direction dir) {
+    int len = static_cast&lt;int&gt;(word.length());
+    for (int i = 0; i &lt; len; ++i) {
+        int r = (dir == ACROSS) ? row : row + i;
+        int c = (dir == ACROSS) ? col + i : col;
+        board[r][c] = word[i];
+        uses[r][c]++; // Reference count increment
+    }
+}
+
+void remove(const std::string& word, int row, int col, Direction dir) {
+    int len = static_cast&lt;int&gt;(word.length());
+    for (int i = 0; i &lt; len; ++i) {
+        int r = (dir == ACROSS) ? row : row + i;
+        int c = (dir == ACROSS) ? col + i : col;
+        uses[r][c]--; // Decrement counter
+        if (uses[r][c] &lt;= 0) {
+            board[r][c] = ' '; // Only clear when no other word uses this cell
+            uses[r][c] = 0;
+        }
+    }
+}</pre>
+      </div>
+
+      <h3>3.2 Candidate Intersection Ranking via Max-Heap (generator.h)</h3>
+      <p>
+        Rather than picking random placements or doing an exhaustive exponential brute-force search, every valid coordinate is evaluated and inserted into a <strong>Max-Heap (Priority Queue)</strong> sorted by crossing frequency.
+      </p>
+
+      <div class="code-container">
+        <div class="code-title">src/generator.h & src/types.h — Max-Heap Placement Logic</div>
+<pre>// Overloaded comparator for Max-Heap priority
+struct CandidatePlacement {
+    int row, col;
+    Direction dir;
+    int crossings;
+    bool operator&lt;(const CandidatePlacement&amp; other) const {
+        return crossings &lt; other.crossings; // Higher crossings = Top of Heap
+    }
+};
+
+// In CrosswordGenerator::generate():
+std::priority_queue&lt;CandidatePlacement&gt; maxHeap;
+for (int r = 0; r &lt; GRID_SIZE; ++r) {
+    for (int c = 0; c &lt; GRID_SIZE; ++c) {
+        for (Direction dir : {ACROSS, DOWN}) {
+            if (grid.canPlace(candidateWord, r, c, dir, false)) {
+                int crossings = grid.countCrossings(candidateWord, r, c, dir);
+                maxHeap.push({r, c, dir, crossings});
+            }
+        }
+    }
+}
+if (!maxHeap.empty()) {
+    CandidatePlacement best = maxHeap.top(); // O(1) retrieval of best crossing
+    grid.place(candidateWord, best.row, best.col, best.dir);
+}</pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-footer">
+    <span>Department of CS & IT — NED University</span>
+    <span>Page 4</span>
+  </div>
+</div>
+
+<!-- ==================== PAGE 5: GRAPH CONNECTIVITY & BST ==================== -->
+<div class="report-sheet inner-sheet">
+  <div>
+    <div class="page-header-band">
+      <h2>4. Graph BFS & BST Leaderboard</h2>
+      <span>Section 4.0 — Traversal Mechanics</span>
+    </div>
+
+    <div class="content-section">
+      <h3>4.1 Word Intersection Graph & BFS Connectivity (graph.h)</h3>
+      <p>
+        A crossword must be fully interconnected. If words form separate disconnected groups on the grid, the crossword is invalid. We model words as vertices ($0 \dots V-1$) and intersections as edges, verifying single-component connectivity using Breadth-First Search (BFS) with a <code>std::queue</code>.
+      </p>
+
+      <div class="code-container">
+        <div class="code-title">src/graph.h — BFS Traversal Algorithm</div>
+<pre>bool isConnected() const {
+    if (numVertices &lt;= 1) return true;
+    std::vector&lt;bool&gt; visited(numVertices, false);
+    std::queue&lt;int&gt; q; // Week 5: FIFO Queue ADT
+
+    visited[0] = true;
+    q.push(0);
+    int visitedCount = 0;
+
+    while (!q.empty()) {
+        int u = q.front();
+        q.pop();
+        visitedCount++;
+
+        for (int neighbor : adjList[u]) {
+            if (!visited[neighbor]) {
+                visited[neighbor] = true;
+                q.push(neighbor);
+            }
+        }
+    }
+    return visitedCount == numVertices; // Guaranteed 1 connected component
+}</pre>
+      </div>
+
+      <h3>4.2 Leaderboard Binary Search Tree (bst.h)</h3>
+      <p>
+        The high-score leaderboard uses a custom dynamic node-based Binary Search Tree. Scores are inserted in $O(\log M)$ average time. To display rankings in descending order without an external sorting pass, we utilize <strong>Reverse Inorder Traversal</strong> (Right $\to$ Root $\to$ Left). Safe tree memory deallocation is guaranteed via <strong>Postorder Traversal</strong>.
+      </p>
+
+      <div class="code-container">
+        <div class="code-title">src/bst.h — Reverse Inorder & Postorder Methods</div>
+<pre>// Reverse Inorder: Right -> Root -> Left (Prints Highest Scores First)
+void reverseInorder(BSTNode* node, int&amp; rank, int maxEntries) const {
+    if (!node || rank &gt; maxEntries) return;
+    reverseInorder(node-&gt;right, rank, maxEntries); // Visit higher scores
+    if (rank &lt;= maxEntries) {
+        std::cout &lt;&lt; rank &lt;&lt; ". " &lt;&lt; node-&gt;data.playerName 
+                  &lt;&lt; " - " &lt;&lt; node-&gt;data.score &lt;&lt; " pts\n";
+        rank++;
+    }
+    reverseInorder(node-&gt;left, rank, maxEntries);  // Visit lower scores
+}
+
+// Postorder Traversal: Left -> Right -> Root (Prevents Memory Leaks)
+void destroyTree(BSTNode* node) {
+    if (!node) return;
+    destroyTree(node-&gt;left);
+    destroyTree(node-&gt;right);
+    delete node; // Deletes parent only after children are deallocated
+}</pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-footer">
+    <span>Department of CS & IT — NED University</span>
+    <span>Page 5</span>
+  </div>
+</div>
+
+<!-- ==================== PAGE 6: IMPEDIMENTS & RESOLUTIONS ==================== -->
+<div class="report-sheet inner-sheet">
+  <div>
+    <div class="page-header-band">
+      <h2>5. Engineering Impediments & Solutions</h2>
+      <span>Section 5.0 — Problem Solving</span>
+    </div>
+
+    <div class="content-section">
+      <div class="callout-card">
+        <strong>Impediment 1: Shared Cell Deletion during Backtracking</strong>
+        <p style="margin:0; font-size:13px; color:var(--charcoal-dark);">
+          <strong>Symptom:</strong> When two words intersect (e.g., <code>APPLE</code> across and <code>PLANT</code> down sharing <code>'P'</code>), removing <code>APPLE</code> wiped the cell to empty, corrupting <code>PLANT</code>.<br>
+          <strong>Fix:</strong> Implemented the <code>uses[15][15]</code> matrix. Each placement increments usage; backtracking decrements usage. Characters are only cleared when <code>uses[r][c] == 0</code>.
+        </p>
+      </div>
+
+      <div class="callout-card">
+        <strong>Impediment 2: Parallel Flank Collisions</strong>
+        <p style="margin:0; font-size:13px; color:var(--charcoal-dark);">
+          <strong>Symptom:</strong> Candidate words were placed adjacent to one another (e.g., <code>CAT</code> on row 1, <code>DOG</code> on row 2 right beneath it), violating crossword rules.<br>
+          <strong>Fix:</strong> Enforced perpendicular flank validation in <code>grid.canPlace()</code> ensuring lateral cells are empty unless forming a legal crossing.
+        </p>
+      </div>
+
+      <div class="callout-card">
+        <strong>Impediment 3: Disconnected Island Crosswords</strong>
+        <p style="margin:0; font-size:13px; color:var(--charcoal-dark);">
+          <strong>Symptom:</strong> The generator placed all words legally according to local rules, but generated 2 or 3 floating, disconnected mini-puzzles on the board.<br>
+          <strong>Fix:</strong> Built an Adjacency List representing intersections between words and evaluated it using a BFS queue. If <code>visitedCount &lt; totalWords</code>, the layout is discarded and regenerated.
+        </p>
+      </div>
+
+      <div class="callout-card">
+        <strong>Impediment 4: Windows Console Screen Redraw Scrolling</strong>
+        <p style="margin:0; font-size:13px; color:var(--charcoal-dark);">
+          <strong>Symptom:</strong> Using standard ANSI <code>\033[2J</code> failed to wipe the command buffer in Windows CMD/PowerShell, causing the board to reprint below past turns in an endless scroll.<br>
+          <strong>Fix:</strong> Implemented direct Win32 API console clearing via <code>FillConsoleOutputCharacter</code>, <code>FillConsoleOutputAttribute</code>, and <code>SetConsoleCursorPosition(hConsole, {0,0})</code> with an automated <code>std::system("cls")</code> fallback.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-footer">
+    <span>Department of CS & IT — NED University</span>
+    <span>Page 6</span>
+  </div>
+</div>
+
+<!-- ==================== PAGE 7: VIVA PREP CHEAT SHEET ==================== -->
+<div class="report-sheet inner-sheet">
+  <div>
+    <div class="page-header-band">
+      <h2>6. Comprehensive Viva Voce Cheat Sheet</h2>
+      <span>Section 6.0 — Viva Examination Defense</span>
+    </div>
+
+    <div class="content-section">
+      <h3>6.1 Standard Technical Questions & Model Responses</h3>
+      
+      <p><strong>Q1: Why did you choose an Adjacency List over an Adjacency Matrix for the word graph?</strong><br>
+      <em>Answer:</em> Crosswords are sparse graphs ($V \approx 8$ words and $E \le 12$ crossings). An adjacency matrix would allocate $V^2 = 64$ entries filled mostly with zeroes. An adjacency list requires only $O(V + E)$ memory and allows BFS to inspect neighbors in $O(\text{deg}(v))$ time rather than scanning an entire matrix row in $O(V)$ time.</p>
+
+      <p><strong>Q2: Why is a Max-Heap utilized in the generator instead of a sorted array?</strong><br>
+      <em>Answer:</em> For every word, hundreds of candidate coordinates and orientations are evaluated. Storing candidates in a Max-Heap allows $O(\log K)$ insertion and $O(\log K)$ extraction of the placement with the highest letter crossings, ensuring the generator greedily creates dense, well-interlocked puzzles.</p>
+
+      <p><strong>Q3: How does Reverse Inorder Traversal in a BST work?</strong><br>
+      <em>Answer:</em> Standard inorder traversal visits <code>Left -> Root -> Right</code>, outputting data in ascending order. Reverse inorder traverses <code>Right -> Root -> Left</code>. Because the right subtree holds higher values, it visits highest scores first, generating a descending leaderboard without needing a separate sorting algorithm.</p>
+
+      <p><strong>Q4: Why is Postorder Traversal necessary when destructing a BST?</strong><br>
+      <em>Answer:</em> In C++, deallocating a parent node before its children results in dangling pointers and memory leaks. Postorder traversal (<code>Left -> Right -> Root</code>) ensures both child subtrees are completely freed before the parent node is deleted.</p>
+
+      <p><strong>Q5: What is the worst-case time complexity of BST insertion, and how is it mitigated in production?</strong><br>
+      <em>Answer:</em> If scores are inserted in already sorted order, the BST degenerates into a linear linked list with worst-case height $O(M)$ and insertion time $O(M)$. In commercial systems, an AVL Tree or Red-Black Tree uses tree rotations to maintain balanced height $O(\log M)$.</p>
+
+      <p><strong>Q6: How does your grid handle memory and coordinate lookups?</strong><br>
+      <em>Answer:</em> The grid is stored as a flat 2D array of static dimensions $15 \times 15$. Lookups <code>board[r][c]</code> operate in $O(1)$ constant time with zero dynamic allocation overhead.</p>
+    </div>
+  </div>
+
+  <div class="page-footer">
+    <span>Department of CS & IT — NED University</span>
+    <span>Page 7</span>
+  </div>
+</div>
+
+</body>
+</html>
