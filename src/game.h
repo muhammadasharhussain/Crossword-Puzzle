@@ -12,6 +12,10 @@
 #include <algorithm>
 #include <sstream>
 
+#ifdef _WIN32
+#include <windows.h>
+#endif
+
 namespace Color {
     const char* const RESET       = "\033[0m";
     const char* const BOLD        = "\033[1m";
@@ -42,8 +46,24 @@ private:
     std::string feedbackMessage = "";
 
     void clearScreen() const {
-        // ANSI escape sequence: \033[2J clears display, \033[1;1H moves cursor to top-left
+#ifdef _WIN32
+        HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+        if (hConsole != INVALID_HANDLE_VALUE) {
+            CONSOLE_SCREEN_BUFFER_INFO csbi;
+            if (GetConsoleScreenBufferInfo(hConsole, &csbi)) {
+                DWORD cellCount = csbi.dwSize.X * csbi.dwSize.Y;
+                DWORD count;
+                COORD homeCoords = { 0, 0 };
+                FillConsoleOutputCharacter(hConsole, (TCHAR)' ', cellCount, homeCoords, &count);
+                FillConsoleOutputAttribute(hConsole, csbi.wAttributes, cellCount, homeCoords, &count);
+                SetConsoleCursorPosition(hConsole, homeCoords);
+                return;
+            }
+        }
+        std::system("cls");
+#else
         std::cout << "\033[2J\033[1;1H" << std::flush;
+#endif
     }
 
 public:
