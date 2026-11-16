@@ -14,7 +14,7 @@ This project is an interactive Command-Line Interface (CLI) Crossword Puzzle gam
 | Week | Concept Covered | Application in Crossword Project |
 |---|---|---|
 | **Week 1** | ADTs, Linear & Binary Search | Dictionary lookup, binary search for clue validation |
-| **Week 2-3** | Singly, Doubly & Circular Linked Lists | Bucket collision resolution in Hash Table, dynamic placement histories |
+| **Week 2-3** | Singly, Doubly & Circular Linked Lists | Bucket collision resolution, dynamic placement histories |
 | **Week 4** | Recursion & Stacks | Backtracking crossword generator; Undo/Redo stack for word placements |
 | **Week 5** | Queues & Circular Queues | BFS queue for grid connectivity analysis; hint queue |
 | **Week 6-7** | Sorting (Bubble, Insertion, Selection, Merge, Quick) | Sorting words by length/frequency for placement priority |
@@ -45,7 +45,7 @@ This project is an interactive Command-Line Interface (CLI) Crossword Puzzle gam
                |                                       |
 +--------------v--------------+             +----------v----------+
 |  Word Dictionary & Hash     |             |  Word Graph         |
-|  - Custom Hash Table        |             |  - Intersection Adj |
+|                             |             |  - Intersection Adj |
 |  - Word/Clue pairs loader   |             |  - BFS Connectivity |
 +-----------------------------+             +----------+----------+
                                                        |
@@ -71,5 +71,5 @@ g++ -std=c++17 -Wall -Wextra src/main.cpp -o Crossword.exe
 ---
 
 ## 👥 Team
-- **Person A**: Data structures (Hash Table, Max-Heap, Generator, Leaderboard BST)
-- **Person B**: Game loop, Grid logic, Stack/Queue, Graph verification
+- **Ashar**: Data structures (Hash Table, Max-Heap, Generator, Leaderboard BST)
+- **Zuha**: Game loop, Grid logic, Stack/Queue, Graph verification
