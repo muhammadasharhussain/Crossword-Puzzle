@@ -10,11 +10,12 @@
 
 The primary objective of this project is to design and engineer an interactive, terminal-based **Crossword Puzzle Game** developed in standard C++17. The program highlights the practical synthesis of core Data Structures and Algorithms taught across Weeks 1 through 13 of the CT159 curriculum.
 
-### Core Features:
-- **Dynamic Board Generation:** Automatically constructs a valid, dense crossword grid on a 15x15 matrix using recursive backtracking and a Max-Heap priority queue.
-- **Topological Graph Validation:** Models placed words and their letter intersections as an undirected graph, utilizing Breadth-First Search (BFS) to guarantee a single interconnected puzzle.
-- **Dynamic Score Tracking & Leaderboard:** Utilizes a custom, pointer-based Binary Search Tree (BST) to maintain sorted high scores, rendered via Reverse Inorder traversal.
-- **In-Place Terminal Visuals:** Features ANSI escape code coloring with Win32 Console buffer clearing to prevent terminal re-printing clutter.
+### Core Features & Algorithmic Insights:
+- **Procedural Crossword Synthesis:** Rather than loading static, predetermined puzzle templates, the engine synthesizes unique, solvable crosswords in real-time from a vocabulary pool.
+- **Greedy Optimization via Max-Heap:** Employs an overloaded Priority Queue to evaluate all grid coordinates in $O(\log K)$ time, greedily selecting coordinates that maximize crossing density.
+- **Topological Integrity via Graph BFS:** Formulates words as vertices and letter crossings as undirected edges, using a FIFO queue to guarantee single-component puzzle coherence (no disconnected islands).
+- **Dynamic Score Tracking & Leaderboard:** Utilizes a custom, pointer-based Binary Search Tree (BST) to maintain sorted high scores, rendered via Reverse Inorder traversal without auxiliary array sorting.
+- **In-Place Terminal Visuals:** Features ANSI escape code coloring with native Win32 Console buffer clearing to prevent terminal re-printing clutter.
 - **Dual-Mode Hint System:** Supports both global random hints and targeted clue-specific letter reveals with custom score penalties.
 
 ---
@@ -212,3 +213,4 @@ void destroyTree(BSTNode* node) {
 - **Why Max-Heap over Linear Array?** $O(\log K)$ priority extraction versus $O(K \log K)$ sorting of all 225 coordinates.
 - **Why Reverse Inorder?** Standard Inorder yields ascending order. Traversing Right subtree first yields descending high scores in $O(M)$ time.
 - **Why Postorder for Deletion?** Bottom-up traversal ensures child pointers are freed before the parent node is deleted, preventing dangling pointers and memory leaks.
+
